@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const userRoutes = require('./src/routes/user_routes')
+const userRoutes = require('./src/routes/user_routes');
+const productRoutes = require('./src/routes/product_routes');
 
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ app.get("/", (req, res) => {
     res.send("API CRUD");
 });
 app.use("/api/user", userRoutes);
+app.use("/api/product", productRoutes);
 
 const PORT = process.env.PORT;
 

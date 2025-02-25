@@ -19,12 +19,12 @@ const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = await prisma.user.create({
+        const user = await prisma.user.create({
             data: { username, email, password: hashedPassword, roleId },
             select: { id: true, username: true, email: true, role: { select: { name: true } } },
         });
 
-        res.status(201).json({ statusCode: 201, message: "Usuario registrado exitosamente", user: newUser });
+        res.status(201).json({ statusCode: 201, message: "Usuario registrado exitosamente", user });
     } catch (error) {
         console.error("Error al registrar el usuario: ", error);
         res.status(200).json({ statusCode: 200, message: "Error al registrar el usuario" });
@@ -58,6 +58,6 @@ const login = async (req, res) => {
         console.error("Error al iniciar sesión: ", error);
         res.status(200).json({ statusCode: 200, message: "Error al iniciar sesión" });
     }
-}
+};
 
-module.exports = { register, login }
+module.exports = { register, login };
