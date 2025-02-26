@@ -41,6 +41,7 @@ export class RegisterComponent {
       this.userModel.username = this.formRegister.value.username;
       this.userModel.email = this.formRegister.value.email;
       this.userModel.password = this.formRegister.value.password;
+      this.userModel.roleId = 2;
 
       this.authService.register(this.userModel).subscribe(receivedItem => {
         console.log(receivedItem);

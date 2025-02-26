@@ -13,21 +13,10 @@ export class AuthService {
   msg$ = new BehaviorSubject<string | null>(null);
   public readonly currentLoginMsg: Observable<any> = this.msg$.asObservable();
 
-  constructor(private httpClient: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
-  login(loginModel: LoginModel) {
-    this.httpClient.post<{statusCode: number, message: string, token: string}>(`${this.URL}/login`, loginModel)
-      .pipe(
-        tap(response => {
-          console.log(response);
-          localStorage.setItem('access_token', response.token);
-          this.goAdminPage();
-        }),
-        catchError(err => {
-          this.msg$.next(err.error.message);
-          return throwError(() => err);
-        })
-      ).subscribe();
+  login(loginModel: LoginModel): Observable<any> {
+    return this.http.post<{statusCode: number, message: string, token: string}>(`${this.URL}/login`, loginModel);
   }
 
   logout() {
@@ -46,12 +35,12 @@ export class AuthService {
     return userToken;
   }
 
-  private goAdminPage() {
+  goAdminPage() {
     this.router.navigate(['/admin']);
   }
 
   register(user: UserModel) {
-    return this.httpClient.post(`${this.URL}/`, user, { observe: 'response', responseType: 'json'});
+    return this.http.post(`${this.URL}/`, user, { observe: 'response', responseType: 'json'});
   }
 
   private goLoginPage(){

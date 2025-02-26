@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { ProductsService } from 'src/app/core/services/products.service';
 import { AddProductDialogComponent } from '../components/add-product-dialog/add-product-dialog.component';
 import { EditProductDialogComponent } from '../components/edit-product-dialog/edit-product-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-home',
@@ -17,12 +18,13 @@ export class HomeComponent implements OnInit {
   displayedColumns: string[] = ['name', 'price', 'status', 'username', 'actions'];
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
   products: any[] = [];
-  // @ViewChild(MatPaginator) paginator: MatPaginator;
-  // @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private productsService: ProductsService, 
     private authService: AuthService, 
+    private toastr: ToastrService,
     private dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -43,14 +45,16 @@ export class HomeComponent implements OnInit {
       response => {
         if (response.statusCode === 200) {
           this.dataSource = new MatTableDataSource(response.products);
-          // this.dataSource.paginator = this.paginator;
-          // this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         }
         else if (response.statusCode === 403) {
           this.authService.logout();
+          this.toastr.error(response.message);
         }
       },
       error => {
+        this.toastr.error(`Error: ${error.error.message}`);
         console.error("Error al obtener los productos: ", error);
       }
     );
@@ -79,18 +83,23 @@ export class HomeComponent implements OnInit {
   deleteProduct(product: any) {
     this.productsService.deleteProduct(product.id).subscribe(
       response => {
-        console.log(response);
         if (response.statusCode === 200) {
-          console.log("Producto eliminado: ", response);
+          this.toastr.success(response.message);
           this.getProducts();
         }
         else if (response.statusCode === 403) {
           this.authService.logout();
+          this.toastr.error(response.message);
         }
       },
       error => {
+        this.toastr.error(`Error al eliminar el producto: ${error.error.message}`);
         console.error('Error al eliminar el producto:', error);
       }
     )
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProductsService } from 'src/app/core/services/products.service';
 
@@ -18,6 +19,7 @@ export class AddProductDialogComponent {
     private dialogRef: MatDialogRef<AddProductDialogComponent>,
     private productsService: ProductsService,
     private authService: AuthService,
+    private toastr: ToastrService,
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -31,15 +33,17 @@ export class AddProductDialogComponent {
       this.productsService.addProduct(product).subscribe(
         response => {
           if (response.statusCode === 201) {
-            console.log('Producto agregado:', response);
+            this.toastr.success(response.message);
             this.dialogRef.close(true);
           }
           else if (response.statusCode === 403) {
+            this.toastr.error(response.message);
             this.authService.logout();
             this.dialogRef.close(true);
           }
         },
         error => {
+          this.toastr.error(`Error: ${error.error.message}`);
           console.error('Error al agregar el producto:', error);
         }
       );

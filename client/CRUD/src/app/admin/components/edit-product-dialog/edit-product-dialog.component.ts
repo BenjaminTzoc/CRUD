@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProductsService } from 'src/app/core/services/products.service';
 
@@ -18,6 +19,7 @@ export class EditProductDialogComponent {
     private dialogRef: MatDialogRef<EditProductDialogComponent>,
     private productsService: ProductsService,
     private authService: AuthService,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.productForm = this.fb.group({
@@ -33,15 +35,17 @@ export class EditProductDialogComponent {
       this.productsService.updateProduct(this.data.id, product).subscribe(
         response => {
           if (response.statusCode === 200){
-            console.log('Producto actualizado:', response);
+            this.toastr.success(response.message);
             this.dialogRef.close(true);
           }
           else if (response.statusCode === 403) {
+            this.toastr.error(response.message);
             this.authService.logout();
             this.dialogRef.close(true);
           }
         },
         error => {
+          this.toastr.error(`Error: ${error.error.message}`);
           console.error('Error al actualizar el producto:', error);
         }
       );

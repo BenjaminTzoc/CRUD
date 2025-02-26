@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { LoginModel } from 'src/app/core/models/login.model';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { CustomvalidationService } from 'src/app/core/services/customValidation.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +19,7 @@ export class LoginComponent {
   msg: string = "";
 
   form: FormGroup = this.fb.group({
-    email: ['',[Validators.required,Validators.pattern(this.customValidator.emailValidation())]],
+    email: ['',[Validators.required]],
     password: ['',Validators.required]
   });
 
@@ -28,7 +28,7 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder, 
     readonly authService: AuthService,
-    private customValidator: CustomvalidationService) { }
+    private toastr: ToastrService) { }
 
   ngOnDestroy(): void {
     if (this.destroyloginMsg) {
@@ -39,7 +39,7 @@ export class LoginComponent {
   ngOnInit(): void {
     this.isLoggedIn();
     this.destroyloginMsg = this.authService.currentLoginMsg.subscribe(responseItem =>{
-        this.msg = responseItem.msg;
+        this.msg = responseItem?.msg;
     });
   }
 
@@ -48,9 +48,23 @@ export class LoginComponent {
 
     if (this.form.valid) {
       this.loginModel = {'username': val.email, 'password': val.password};
-      this.authService.login(this.loginModel);
-      
-      this.showValidationErrors = false;
+      this.authService.login(this.loginModel).subscribe(
+        response => {
+          this.showValidationErrors = false;
+
+          if (response.statusCode === 200) {
+            this.toastr.success(response.message);
+            localStorage.setItem('access_token', response.token);
+            this.authService.goAdminPage();
+          }else{
+            this.toastr.error(response.message);
+          }
+        },
+        error => {
+          this.toastr.error("Error al iniciar sesión");
+          console.error("Error al iniciar sesión: ", error);
+        }
+      )
     }else{
       this.showValidationErrors = true;
     }
