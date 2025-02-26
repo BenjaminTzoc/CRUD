@@ -68,8 +68,14 @@ const deleteProduct = async (req, res) => {
 
 const getProducts = async (req, res) => {
     try {
+        const roleId = req.user.roleId;
+        const filters = {};
+
+        if (roleId !== 1)
+            filters.status = true;
+
         const products = await prisma.product.findMany({ 
-            where: { status: true },
+            where: filters,
             select: { id: true, name: true, price: true, status: true, user: { select: { id: true, username: true } } },
         });
 

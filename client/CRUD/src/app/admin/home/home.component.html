@@ -1,0 +1,41 @@
+<div class="w-100 p-5" >
+    <div class="card p-5">
+      <button mat-button class="btn btn-success" (click)="addProduct()"
+        style="width: 150px;">Nuevo</button>
+        <mat-table [dataSource]="dataSource" matSort>
+        
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Producto </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+          </ng-container>
+        
+          <ng-container matColumnDef="price">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Precio </mat-header-cell>
+            <mat-cell *matCellDef="let element"> Q {{element.price}} </mat-cell>
+          </ng-container>
+        
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.status ? 'Activo' : 'Inactivo'}} </mat-cell>
+          </ng-container>
+        
+          <ng-container matColumnDef="username">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Usuario que registró </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.user.username}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <button mat-button class="btn btn-warning me-2" (click)="editProduct(element)">Editar</button>
+              <button mat-button class="btn btn-danger" (click)="deleteProduct(element)">Eliminar</button>
+            </mat-cell>
+          </ng-container>
+        
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+    
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

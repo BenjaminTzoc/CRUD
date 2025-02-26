@@ -1,0 +1,27 @@
+<div class="d-flex w-100 justify-content-center">
+    <h1 mat-dialog-title>Agregar Producto</h1>
+</div>
+<div mat-dialog-content>
+  <form [formGroup]="productForm">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre del Producto:</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
+        <input type="text" class="form-control" formControlName="name" placeholder="Ingresa el nombre del producto">
+      </div>
+      <span class="text-danger" *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">{{getErrorMessage('name')}}</span>
+    </div>
+    <div class="mb-3">
+      <label for="price" class="form-label">Precio:</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+        <input type="number" class="form-control" formControlName="price" placeholder="Ingresa el precio del producto">
+      </div>
+      <span class="text-danger" *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">{{getErrorMessage('price')}}</span>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions class="w-100 d-flex justify-content-center">
+  <button mat-button (click)="close()" class="btn btn-danger me-2">Cancelar</button>
+  <button mat-button (click)="addProduct()" class="btn btn-success" [disabled]="productForm.invalid">Agregar</button>
+</div>

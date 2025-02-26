@@ -1,0 +1,49 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+          <div class="card-header text-center bg-success text-white">
+            <h3>Registro de Usuario</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="formRegister" (ngSubmit)="register()">
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre de Usuario:</label>
+                <input type="text" formControlName="username" class="form-control" placeholder="Ingresa un nombre de usuario" required maxlength="20">
+                <span  class="text-danger" *ngIf="formRegister.get('username')?.invalid && showValidationErrors">{{getErrorMessage('username')}}</span>
+              </div>
+              <div class="mb-3">
+                <label for="correo" class="form-label">Correo Electrónico:</label>
+                <input type="email" formControlName="email" class="form-control" placeholder="Ingresa tu correo electrónico" maxlength="50">
+                <span class="text-danger" *ngIf="formRegister.get('email')?.invalid && showValidationErrors">{{getErrorMessage('email')}}</span>
+              </div>
+              <div class="mb-3">
+                <label for="contrasena" class="form-label">Contraseña:</label>
+                <div class="input-group">
+                  <input type="password" formControlName="password" class="form-control" placeholder="Ingresa tu contraseña" #passwordInput maxlength="20">
+                  <button class="btn btn-outline-secondary" (click)="showPass()" type="button"><i class="bi {{eyeClass}}"></i></button>
+                </div>
+                <span class="text-danger" *ngIf="formRegister.get('password')?.invalid && showValidationErrors">{{getErrorMessage('password')}}</span>
+              </div>
+              <div class="mb-3">
+                <label for="confirmarContrasena" class="form-label">Confirmar Contraseña:</label>
+                <div class="input-group">
+                  <input type="password" formControlName="passwordConfirm" class="form-control" placeholder="Confirma tu contraseña" #passwordInput_confirm maxlength="20">
+                </div>
+                <span class="text-danger" *ngIf="formRegister.get('passwordConfirm')?.invalid && showValidationErrors">{{getErrorMessage('passwordConfirm')}}</span>
+              </div>
+              <div class="mb-3 text-danger" *ngIf="msgErrorS!=''">
+                <p>{{msgErrorS}}</p>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-success">Registrarse</button>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer text-muted text-center">
+            ¿Ya tienes una cuenta? <a href="auth/login">Inicia Sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
